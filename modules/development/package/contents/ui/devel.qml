@@ -39,7 +39,7 @@ Item {
     GridLayout {
         id: formLayout
         columns: 2
-        //rows: 4
+        rows: 4
         columnSpacing: units.gridUnit
         rowSpacing: units.gridUnit
 
