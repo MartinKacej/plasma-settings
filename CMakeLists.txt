@@ -31,10 +31,10 @@ set (QT_MIN_VERSION "5.4.0")
 
 find_package(KF5 REQUIRED COMPONENTS
     WindowSystem CoreAddons Solid Config Auth DBusAddons
-    I18n Plasma PlasmaQuick Declarative KIO
+    I18n Plasma PlasmaQuick Declarative KIO KDELibs4Support
     )
 
-# find_package(KAccounts)
+find_package(KAccounts)
 find_package(AccountsQt5 1.10 CONFIG)
 find_package(SignOnQt5 8.55 CONFIG)
 
