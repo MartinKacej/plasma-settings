@@ -30,72 +30,100 @@ import org.kde.active.settings 2.0 as ActiveSettings
 Item {
     id: main
     objectName: "wifiMain"
-    width: 200; height: 400
+    width: 500
+    height: width * 1.5
     
     Column {
         id: formLayout
-        spacing:units.gridUnit
+        spacing: units.gridUnit
         anchors {
             fill: parent
             margins: 10
             leftMargin: 5
         }
+
+        PlasmaExtras.Heading {
+            text: i18n("Wi-fi")
+            level: 3
+        }
+
         RowLayout{
             width: parent.width
             
             PlasmaComponents.Label {
-                anchors.left:parent.left
+                anchors.left: parent.left
                 text: i18n("Wifi")
                 Layout.fillWidth: true
             }
             
             PlasmaComponents.Switch {
                 id: wifiSwitch
-                checked:false 
+                checked: false
                 onClicked: {
                     
                 }
             }
         }
        
-        PlasmaComponents.Button{     
-            id:editorButton
-            text:"Connection editor"
-            onClicked: {
-                
-            }
-        }
          Rectangle{
              //separator
-            width:parent.width
-            height:2
-            border.color:"grey" 
+            width: parent.width
+            height: 2
+            border.color: "grey"
         }
         
         PlasmaComponents.Label {
-            anchors.left:parent.left
+            anchors.left: parent.left
             text: i18n("<b>Available wifi networks</b>")
             Layout.fillWidth: true
         }
+
         Rectangle{
-            id:wifiSection
-            anchors.left:parent.left
-            height: parent.height
+            id: wifiSection
+            anchors.left: parent.left
+            implicitHeight: parent.height-30
+            anchors.bottomMargin: 20
             width: parent.width
-            border.color:"black"
-            //Layout.fillHeight: true
+            border.color: "black"
+            Layout.fillHeight:true
             ListView {
-                anchors.fill:parent
-                anchors.margins:10
-                spacing:10
-                width:parent.width
-                height: 200
-                model:TestWifi{
-                    id:wifiTestModel
+                anchors.fill: parent
+                anchors.margins: 10
+                width: parent.width
+                model: TestWifi{
+                    id: wifiTestModel
                 }
-                delegate:RowItemDelegate{
-                    id:wifiDelegate
+
+                delegate: RowItemDelegate{
+                    id: wifiDelegate
                 }
+            }
+        }
+        
+        PlasmaComponents.Button{     
+            id: editorButton
+            text: "Connection editor"
+            onClicked: {
+                connectionEditorDialog.open()
+            }
+        }
+    }
+
+    PlasmaComponents.CommonDialog {
+        id: connectionEditorDialog
+        titleText: i18n("Connection Editor")
+        buttonTexts: [i18n("Close")]
+        onButtonClicked: close()
+        content: Loader {
+            id: connectionEditorDialogLoader
+            width: units.gridUnit * 22
+            height: units.gridUnit * 25
+            }
+
+        onStatusChanged: {
+            if (status == PlasmaComponents.DialogStatus.Open) {
+                connectionEditorDialogLoader.source = "ConnectionEditorDIalog.qml"
+                connectionEditorDialogLoader.item.focusTextInput()
             }
         }
     }
