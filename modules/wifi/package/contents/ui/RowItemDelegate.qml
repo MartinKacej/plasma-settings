@@ -17,8 +17,8 @@ PlasmaComponents.ListItem {
 
         Rectangle {
             anchors.horizontalCenter: parent.Center
-            width: 10
-            height: 10
+            width: units.gridUnit
+            height: units.gridUnit
             color: status
         }
     }
