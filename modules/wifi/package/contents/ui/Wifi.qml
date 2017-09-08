@@ -30,7 +30,7 @@ import org.kde.active.settings 2.0 as ActiveSettings
 Item {
     id: main
     objectName: "wifiMain"
-    width: 500
+    width: units.gridUnit * 30
     height: width * 1.5
     
     Column {
@@ -38,8 +38,8 @@ Item {
         spacing: units.gridUnit
         anchors {
             fill: parent
-            margins: 10
-            leftMargin: 5
+            margins: units.gridUnit
+            leftMargin: units.gridUnit/2
         }
 
         PlasmaExtras.Heading {
@@ -68,7 +68,7 @@ Item {
          Rectangle{
              //separator
             width: parent.width
-            height: 2
+            height: units.gridUnit/8
             border.color: "grey"
         }
         
@@ -81,14 +81,14 @@ Item {
         Rectangle{
             id: wifiSection
             anchors.left: parent.left
-            implicitHeight: parent.height-30
-            anchors.bottomMargin: 20
+            implicitHeight: 300 //units.gridUnit * 45 -100
+            //anchors.bottomMargin: 29
             width: parent.width
             border.color: "black"
-            Layout.fillHeight:true
+            //Layout.fillHeight:true
             ListView {
                 anchors.fill: parent
-                anchors.margins: 10
+                anchors.margins: units.gridUnit
                 width: parent.width
                 model: TestWifi{
                     id: wifiTestModel
@@ -122,7 +122,7 @@ Item {
 
         onStatusChanged: {
             if (status == PlasmaComponents.DialogStatus.Open) {
-                connectionEditorDialogLoader.source = "ConnectionEditorDIalog.qml"
+                connectionEditorDialogLoader.source = "ConnectionEditorDialog.qml"
                 connectionEditorDialogLoader.item.focusTextInput()
             }
         }
