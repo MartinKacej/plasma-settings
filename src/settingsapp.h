@@ -1,55 +1,46 @@
 /***************************************************************************
- *   Copyright 2011 Marco Martin <mart@kde.org>                            *
+ *                                                                         *
+ *   Copyright 2011-2014 Sebastian Kügler <sebas@kde.org>                  *
+ *   Copyright 2017 Marco Martin <mart@kde.org>                            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as published by  *
+ *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  *   This program is distributed in the hope that it will be useful,       *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU Library General Public License for more details.                          *
+ *   GNU General Public License for more details.                          *
  *                                                                         *
- *   You should have received a copy of the GNU Library General Public License     *
+ *   You should have received a copy of the GNU General Public License     *
  *   along with this program; if not, write to the                         *
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
-#ifndef PACKAGE_H
-#define PACKAGE_H
 
-#include <QQuickItem>
-#include <QUrl>
-#include <KPackage/Package>
+#ifndef SETTINGSAPP_H
+#define SETTINGSAPP_H
 
-class QTimer;
+#include <QObject>
+#include <QCommandLineParser>
 
-class Package : public QObject
+class SettingsApp : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString visibleName READ visibleName NOTIFY visibleNameChanged)
 
 public:
-    Package(QObject *parent = 0);
-    ~Package();
-
-    QString name() const;
-    void setName(const QString &name);
-
-    Q_INVOKABLE QString filePath(const QString &fileType, const QString &filename) const;
-    Q_INVOKABLE QString filePath(const QString &fileType) const;
-
-    QString visibleName() const;
+    explicit SettingsApp(QCommandLineParser &parser, QObject *parent = 0 );
+    ~SettingsApp();
 
 Q_SIGNALS:
-    void nameChanged(const QString &);
-    void visibleNameChanged();
+    void moduleRequested(const QString &module);
+    void activateRequested();
+
 
 private:
-    QString m_name;
-    KPackage::Package m_package;
+    void setupKDBus();
+    QCommandLineParser *m_parser;
 };
 
-#endif
+#endif // SettingsApp_H

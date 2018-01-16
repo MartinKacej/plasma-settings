@@ -1,5 +1,6 @@
 /***************************************************************************
  *                                                                         *
+ *   Copyright 2017 Marco Martin <mart@kde.org>                            *
  *   Copyright 2011-2014 Sebastian Kügler <sebas@kde.org>                  *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,34 +19,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef VIEW_H
-#define VIEW_H
+import QtQuick 2.6
+import QtQuick.Controls 2.2 as Controls
+import org.kde.kirigami 2.2 as Kirigami
 
-#include <QQuickView>
-#include <QCommandLineParser>
+Kirigami.ApplicationWindow {
+    id: rootItem
 
-#include <Plasma/Package>
+    property alias currentModule: moduleItem.module
 
-class View : public QQuickView
-{
-    Q_OBJECT
+    header: Kirigami.ApplicationHeader {}
+    pageStack.initialPage: modulesList
 
-public:
-    explicit View(const QCommandLineParser &parser, QWindow *parent = 0 );
-    ~View();
-    QCommandLineParser *parser;
+    Connections {
+        target: settingsApp
+        onActivateRequested: rootItem.requestActivate();
+        onModuleRequested: {
+            pageStack.currentIndex = 0;
+            rootItem.currentModule = module;
+        }
+    }
+    onCurrentModuleChanged: {
+        if (currentModule.length > 0) {
+            pageStack.push(moduleItem);
+        }
+        pageStack.currentIndex = 1;
+    }
 
-Q_SIGNALS:
-    void titleChanged(const QString&);
+    Component.onCompleted: {
+        if (startModule.length > 0) {
+            rootItem.currentModule = startModule;
+        }
+    }
+    ModulesList {
+        id: modulesList
+    }
 
-private Q_SLOTS:
-    void onStatusChanged(QQuickView::Status status);
-    void updateStatus();
-
-private:
-    void setupKDBus();
-    Plasma::Package m_package;
-    QQuickItem* m_settingsRoot;
-};
-
-#endif // VIEW_H
+    ModuleItem {
+        id: moduleItem
+        visible: false
+    }
+}

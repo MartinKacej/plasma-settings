@@ -1,6 +1,7 @@
 /***************************************************************************
  *                                                                         *
  *   Copyright 2011-2014 Sebastian Kügler <sebas@kde.org>                  *
+ *   Copyright 2017 Marco Martin <mart@kde.org>                            *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -18,48 +19,42 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-import QtQuick 2.2
+#include "settingsapp.h"
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 2.0 as PlasmaComponents
-import org.kde.plasma.extras 2.0 as PlasmaExtras
+#include <QDebug>
+#include <QQmlContext>
+#include <QQmlEngine>
 
-import org.kde.plasma.mobilecomponents 0.2 as MobileComponents
-import org.kde.active.settings 2.0 as ActiveSettings
+#include <KDBusService>
 
-Item {
-    id: header
-    height: childrenRect.height
+#include <KLocalizedString>
 
-    PlasmaCore.IconItem {
-        id: topIcon
-        width: units.gridUnit * 2
-        height: width
-        source: settingsItem.icon
-        anchors {
-            verticalCenter: title.verticalCenter
-            right: parent.right
-            margins: units.gridUnit
-            rightMargin: 0
-        }
-    }
-    PlasmaExtras.Title {
-        id: title
-        anchors {
-            left: parent.left
-            right: topIcon.left
-        }
-        elide: Text.ElideRight
-        text: settingsItem.name
-    }
-    PlasmaComponents.Label {
-        id: descriptionLabel
-        anchors {
-            left: parent.left
-            right: topIcon.left
-            top: title.bottom
-        }
-        opacity: 0.6
-        text: settingsItem.description
-    }
+
+SettingsApp::SettingsApp(QCommandLineParser &parser, QObject *parent)
+    : QObject(parent),
+      m_parser(&parser)
+{
+    setupKDBus();
 }
+
+SettingsApp::~SettingsApp()
+{
+}
+
+void SettingsApp::setupKDBus()
+{
+    QCoreApplication::setOrganizationDomain("kde.org");
+    KDBusService* service = new KDBusService(KDBusService::Unique, this);
+
+    QObject::connect(service, &KDBusService::activateRequested, this, [this](const QStringList &arguments, const QString &workingDirectory) {
+        qDebug() << "activateRequested" << arguments;
+        m_parser->parse(arguments);
+        if (m_parser->isSet("module")) {
+            const QString module = m_parser->value("module");
+            qDebug() << "Loading module:" << module;
+            emit moduleRequested(module);
+        }
+        emit activateRequested();
+    } );
+}
+
