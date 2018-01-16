@@ -86,27 +86,16 @@ Item {
             width: parent.width
             border.color: "black"
             //Layout.fillHeight:true
+            ListView {
+                anchors.fill: parent
+                anchors.margins: units.gridUnit
+                width: parent.width
+                model: TestWifi{
+                    id: wifiTestModel
+                }
 
-            PlasmaExtras.ScrollArea{
-
-                anchors {
-                            bottom: parent.bottom
-                            left: parent.left
-                            right: parent.right
-                            fill: parent
-                        }
-
-                ListView {
-                    anchors.fill: parent
-                    anchors.margins: units.gridUnit
-                    width: parent.width
-                    model: TestWifi{
-                        id: wifiTestModel
-                    }
-
-                    delegate: RowItemDelegate{
-                        id: wifiDelegate
-                    }
+                delegate: RowItemDelegate{
+                    id: wifiDelegate
                 }
             }
         }
