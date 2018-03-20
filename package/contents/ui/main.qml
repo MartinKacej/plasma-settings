@@ -31,6 +31,10 @@ Kirigami.ApplicationWindow {
     header: Kirigami.ApplicationHeader {}
     pageStack.initialPage: modulesList
 
+    contextDrawer: Kirigami.ContextDrawer {
+	id: contextDrawer
+    }
+
     Connections {
         target: settingsApp
         onActivateRequested: rootItem.requestActivate();
